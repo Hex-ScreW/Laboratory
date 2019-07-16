@@ -300,8 +300,8 @@ classdef BubbleClass < handle
             temp = max(temp);
         end
         
-        function UpdatePotential(obj,FLD,dt)
-            obj.Phi = obj.Phi' + ((FLD.Pinf-obj.Pc)./FLD.Rho + (obj.U.^2 + obj.V.^2).* 0.5).*dt;
+        function UpdatePotential(obj,dt)
+            obj.Phi = obj.Phi' + ((101300-obj.Pc)./998.203 + (obj.U.^2 + obj.V.^2).* 0.5).*dt;
             obj.Phi = obj.Phi';
         end
         
