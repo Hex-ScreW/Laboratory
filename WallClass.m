@@ -14,8 +14,6 @@ classdef WallClass < BubbleClass
                 TEMP = N;
             end
             
-            obj = obj@BubbleClass(N,Radius,FLD);
-            
             obj.N = TEMP;
             obj.MaxRadius = Radius;
             Initialize(obj);
