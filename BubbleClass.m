@@ -2,7 +2,7 @@
 classdef BubbleClass < handle
     properties
         % ŒvŽZ—p
-        N          % —£ŽU“_”
+        N = 60;         % —£ŽU“_”
         GaussNodeNum = 10; % ‚í‚«o‚µŠÔ‚Ì•ªŠ„”
         SCN = 0.2; % ƒ\[ƒX‚ðŒvŽZ“_‚©‚ç—£‚·Š„‡
         Node        % ƒ‹ƒWƒƒƒ“ƒhƒ‹‹Ï ƒm[ƒh
@@ -11,7 +11,7 @@ classdef BubbleClass < handle
         Mip2
         
         % ‹C–A«Ž¿—p
-        MaxRadius % ‹C–A‚ÌÅ‘å”¼Œa
+        MaxRadius = 0.0015; % ‹C–A‚ÌÅ‘å”¼Œa
         InitialRadius  % ‹C–A‰Šú”¼Œa
         Radius
         Pc = 2300;   % Pa ‹C–A“à‚Ìˆ³—Í
@@ -36,16 +36,10 @@ classdef BubbleClass < handle
         %---------------ƒRƒ“ƒXƒgƒ‰ƒNƒ^-------------------
         function obj = BubbleClass(N,Radius,FLD)
             
-            if nargin == 0
-                TEMP(1) = 60;
-                TEMP(2) = 0.0015;
-            else
-                TEMP(1) = N;
-                TEMP(2) = Radius;
+            if nargin ~= 0
+                obj.N = N;
+                obj.MaxRadius = Radius;
             end
-            
-            obj.N = TEMP(1);
-            obj.MaxRadius = TEMP(2);
             
             Initialize(obj,FLD);
         end

@@ -7,7 +7,6 @@ clc
 maxNumCompThreads(2);
 %maxNumCompThreads('automatic');
 
-global dt
 FLD.Pinf = 101300;       % Pa　無限遠での圧力
 FLD.Rho = 998.203;       % kg/m^3　水の密度　20℃,1atm
 dt = 0.000000005;
@@ -37,7 +36,7 @@ Bg.Initialize_g(FLD);
 Bg.Y = Bg.Radius;
 
 % 壁の設定
-Wall = WallClass(24,FLD);
+Wall = WallClass(24,Bc.MaxRadius,FLD);
 
 % 記録設定
 RecB1 = Record(Bc.N,ENDCYCLE/RecOption.Scalar);

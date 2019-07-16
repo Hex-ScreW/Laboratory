@@ -6,7 +6,7 @@ classdef WallClass < BubbleClass
     end
     methods
         %---------------コンストラクタ-------------------
-        function obj = WallClass(N,FLD)
+        function obj = WallClass(N,Radius,FLD)
             
             if nargin == 0
                 TEMP = 24;
@@ -14,8 +14,12 @@ classdef WallClass < BubbleClass
                 TEMP = N;
             end
             
+            obj = obj@BubbleClass(N,Radius,FLD);
+            
             obj.N = TEMP;
+            obj.MaxRadius = Radius;
             Initialize(obj);
+            
         end
         
         function Initialize(obj)
