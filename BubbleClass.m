@@ -34,45 +34,45 @@ classdef BubbleClass < handle
     end
     methods
         %---------------コンストラクタ-------------------
-        function obj = BubbleClass(N,Radius,FLD)
+        function obj = BubbleClass(N,Radius)
             
-            if nargin ~= 0
+            if nargin > 0
                 obj.N = N;
                 obj.MaxRadius = Radius;
             end
             
-            Initialize(obj,FLD);
+            Initialize(obj);
         end
         
-        function Initialize(obj,FLD)
-            Initialdef(obj,FLD);
+        function Initialize(obj)
+            Initialdef(obj);
             CirclePlot(obj);
             PlotSource(obj);
-            InitialPhi(obj,FLD);
+            InitialPhi(obj);
             obj.Q = zeros(obj.N,1);
             obj.Volume = (4.*pi.*obj.InitialRadius.^3)./3;
             obj.U = zeros(1,obj.N);
             obj.V = zeros(1,obj.N);
         end
         
-        function Initialize_g(obj,FLD)
+        function Initialize_g(obj)
             obj.InitialRadius = obj.MaxRadius;
             obj.Radius = obj.InitialRadius;
             obj.MaxVolume = (4.*pi.*obj.MaxRadius.^3)./3;
             obj.Volume = (4.*pi.*obj.Radius.^3)./3;
             obj.Phi = zeros(obj.N,1);
-            obj.Pc = FLD.Pinf;
+            obj.Pc = 101300;
             CirclePlot(obj);
         end
         
         %----------------------諸々の初期設定-------------------------------
-        function Initialdef(obj,FLD)
+        function Initialdef(obj)
             [obj.Node, obj.Weight] = GNAW(obj.GaussNodeNum); % ガウス求積のノードと重みを計算
             obj.Mip1 = 0.5.*(1-obj.Node); % ガウス求積の内挿関数
             obj.Mip2 = 0.5.*(1+obj.Node);
             obj.InitialRadius = obj.MaxRadius*0.05;
             obj.Radius = obj.InitialRadius;
-            obj.RayleighTime = 1.8294*obj.MaxRadius*sqrt(FLD.Rho/(FLD.Pinf - obj.Pc));
+            obj.RayleighTime = 1.8294*obj.MaxRadius*sqrt(998.203/(101300 - obj.Pc));
             obj.MaxVolume = 4.*pi.*(obj.MaxRadius.^3)./3;
         end
         
@@ -123,8 +123,8 @@ classdef BubbleClass < handle
         end
         
         %------------------------初期ポテンシャルの計算-------------------------------
-        function InitialPhi(obj,FLD)
-            obj.Phi = -obj.InitialRadius*sqrt((0.666667*((FLD.Pinf - obj.Pc)/FLD.Rho)*...
+        function InitialPhi(obj)
+            obj.Phi = -obj.InitialRadius*sqrt((0.666667*((101300 - obj.Pc)/998.203)*...
                 ((obj.MaxRadius/obj.InitialRadius)^3 - 1)));
             obj.Phi = ones(obj.N,1).*obj.Phi;
         end

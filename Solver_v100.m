@@ -28,15 +28,15 @@ Param.xi = 0.15; % 気泡半径比
 
 %------------------気泡設定------------------------
 % キャビテーション気泡の設定
-Bc = BubbleClass(60,0.0015,FLD);
+Bc = BubbleClass(60,0.0015);
 
 % ガス気泡の設定
-Bg = BubbleClass(1,Bc.MaxRadius.*Param.xi,FLD);
-Bg.Initialize_g(FLD);
+Bg = BubbleClass(1,Bc.MaxRadius.*Param.xi);
+Bg.Initialize_g;
 Bg.Y = Bg.Radius;
 
 % 壁の設定
-Wall = WallClass(24,Bc.MaxRadius,FLD);
+Wall = WallClass(24,Bc.MaxRadius);
 
 % 記録設定
 RecB1 = Record(Bc.N,ENDCYCLE/RecOption.Scalar);
