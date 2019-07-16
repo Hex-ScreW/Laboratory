@@ -1,3 +1,5 @@
+% オブジェクト管理 parforデバッグ
+
 close all
 clear all
 clc
@@ -5,9 +7,9 @@ clc
 maxNumCompThreads(2);
 %maxNumCompThreads('automatic');
 
-global Pinf Rho dt
-Pinf = 101300;       % Pa　無限遠での圧力
-Rho = 998.203;       % kg/m^3　水の密度　20℃,1atm
+global dt
+FLD.Pinf = 101300;       % Pa　無限遠での圧力
+FLD.Rho = 998.203;       % kg/m^3　水の密度　20℃,1atm
 dt = 0.000000005;
 ENDCYCLE = 200000;
 
@@ -27,15 +29,15 @@ Param.xi = 0.15; % 気泡半径比
 
 %------------------気泡設定------------------------
 % キャビテーション気泡の設定
-Bc = BubbleClass(60,0.0015);
+Bc = BubbleClass(60,0.0015,FLD);
 
 % ガス気泡の設定
-Bg = BubbleClass(1,Bc.MaxRadius.*Param.xi);
+Bg = BubbleClass(1,Bc.MaxRadius.*Param.xi,FLD);
 Bg.Initialize_g;
 Bg.Y = Bg.Radius;
 
 % 壁の設定
-Wall = WallClass(24);
+Wall = WallClass(24,FLD);
 
 % 記録設定
 RecB1 = Record(Bc.N,ENDCYCLE/RecOption.Scalar);
@@ -125,11 +127,11 @@ for I = 1:ENDCYCLE
     %----------------圧力の計算------------------
     %Bg.Radius = abs(Bg.X(1) - Bg.X(end)).*0.5;
     Bg.Radius = Bg.Y;
-    Bg.Pc = Pinf.*(Bg.MaxRadius./Bg.Radius).^3.9; % 体積から気泡内圧力を計算
+    Bg.Pc = FLD.Pinf.*(Bg.MaxRadius./Bg.Radius).^3.9; % 体積から気泡内圧力を計算
     
     %-----------------速度ポテンシャルの時間変化---------------
-    UpdatePotential(Bc);
-    UpdatePotential(Bg);
+    UpdatePotential(Bc,FLD,dt);
+    UpdatePotential(Bg,FLD,dt);
     
     %---------システムインフォメーション----------
     if rem(I,5000) == 0
@@ -139,8 +141,6 @@ for I = 1:ENDCYCLE
 end
 toc
 
-RecOption.Pinf = Pinf;
-RecOption.Rho = Rho;
 RecOption.ENDCYCLE = I;
 RecOption.RecCYCLE = II;
 
@@ -151,4 +151,6 @@ B2RecData = RecB2.saveobj(II,ENDCYCLE/RecOption.Scalar);
 WallData = Wall.saveobj;
 TIME(:,I:ENDCYCLE/RecOption.Scalar) = [];
 TIMESTEP(:,I:ENDCYCLE/RecOption.Scalar) = [];
-save('debug.mat','Param','B1Data','B1RecData','B2RecData','B2Data','WallData','RecOption','TIMESTEP')
+save('debug.mat','Param','FLD',...
+    'B1Data','B1RecData','B2RecData','B2Data','WallData',...
+    'RecOption','TIMESTEP')

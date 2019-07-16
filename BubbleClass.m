@@ -34,7 +34,7 @@ classdef BubbleClass < handle
     end
     methods
         %---------------コンストラクタ-------------------
-        function obj = BubbleClass(N,Radius)
+        function obj = BubbleClass(N,Radius,FLD)
             
             if nargin == 0
                 TEMP(1) = 60;
@@ -47,40 +47,38 @@ classdef BubbleClass < handle
             obj.N = TEMP(1);
             obj.MaxRadius = TEMP(2);
             
-            Initialize(obj);
+            Initialize(obj,FLD);
         end
         
-        function Initialize(obj)
-            Initialdef(obj);
+        function Initialize(obj,FLD)
+            Initialdef(obj,FLD);
             CirclePlot(obj);
             PlotSource(obj);
-            InitialPhi(obj);
+            InitialPhi(obj,FLD);
             obj.Q = zeros(obj.N,1);
             obj.Volume = (4.*pi.*obj.InitialRadius.^3)./3;
             obj.U = zeros(1,obj.N);
             obj.V = zeros(1,obj.N);
         end
         
-        function Initialize_g(obj)
-            global Pinf
+        function Initialize_g(obj,FLD)
             obj.InitialRadius = obj.MaxRadius;
             obj.Radius = obj.InitialRadius;
             obj.MaxVolume = (4.*pi.*obj.MaxRadius.^3)./3;
             obj.Volume = (4.*pi.*obj.Radius.^3)./3;
             obj.Phi = zeros(obj.N,1);
-            obj.Pc = Pinf;
+            obj.Pc = FLD.Pinf;
             CirclePlot(obj);
         end
         
         %----------------------諸々の初期設定-------------------------------
-        function Initialdef(obj)
-            global Pinf Rho
+        function Initialdef(obj,FLD)
             [obj.Node, obj.Weight] = GNAW(obj.GaussNodeNum); % ガウス求積のノードと重みを計算
             obj.Mip1 = 0.5.*(1-obj.Node); % ガウス求積の内挿関数
             obj.Mip2 = 0.5.*(1+obj.Node);
             obj.InitialRadius = obj.MaxRadius*0.05;
             obj.Radius = obj.InitialRadius;
-            obj.RayleighTime = 1.8294*obj.MaxRadius*sqrt(Rho/(Pinf - obj.Pc));
+            obj.RayleighTime = 1.8294*obj.MaxRadius*sqrt(FLD.Rho/(FLD.Pinf - obj.Pc));
             obj.MaxVolume = 4.*pi.*(obj.MaxRadius.^3)./3;
         end
         
@@ -131,9 +129,8 @@ classdef BubbleClass < handle
         end
         
         %------------------------初期ポテンシャルの計算-------------------------------
-        function InitialPhi(obj)
-            global Pinf Rho
-            obj.Phi = -obj.InitialRadius*sqrt((0.666667*((Pinf - obj.Pc)/Rho)*...
+        function InitialPhi(obj,FLD)
+            obj.Phi = -obj.InitialRadius*sqrt((0.666667*((FLD.Pinf - obj.Pc)/FLD.Rho)*...
                 ((obj.MaxRadius/obj.InitialRadius)^3 - 1)));
             obj.Phi = ones(obj.N,1).*obj.Phi;
         end
@@ -302,17 +299,15 @@ classdef BubbleClass < handle
             end
         end
         
-        function temp = MaxMovement(obj)
-            global dt
+        function temp = MaxMovement(obj,dt)
             dx = obj.X.*dt;
             dy = obj.Y.*dt;
             temp = sqrt(dx.^2 + dy.^2);
             temp = max(temp);
         end
         
-        function UpdatePotential(obj)
-            global Pinf Rho dt
-            obj.Phi = obj.Phi' + ((Pinf-obj.Pc)./Rho + (obj.U.^2 + obj.V.^2).* 0.5).*dt;
+        function UpdatePotential(obj,FLD,dt)
+            obj.Phi = obj.Phi' + ((FLD.Pinf-obj.Pc)./FLD.Rho + (obj.U.^2 + obj.V.^2).* 0.5).*dt;
             obj.Phi = obj.Phi';
         end
         

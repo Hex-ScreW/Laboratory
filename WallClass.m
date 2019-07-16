@@ -6,7 +6,7 @@ classdef WallClass < BubbleClass
     end
     methods
         %---------------コンストラクタ-------------------
-        function obj = WallClass(N)
+        function obj = WallClass(N,FLD)
             
             if nargin == 0
                 TEMP = 24;
