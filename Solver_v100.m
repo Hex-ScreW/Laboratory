@@ -33,7 +33,7 @@ Bc = BubbleClass(60,0.0015,FLD);
 
 % ƒKƒX‹C–A‚Ìİ’è
 Bg = BubbleClass(1,Bc.MaxRadius.*Param.xi,FLD);
-Bg.Initialize_g;
+Bg.Initialize_g(FLD);
 Bg.Y = Bg.Radius;
 
 % •Ç‚Ìİ’è
